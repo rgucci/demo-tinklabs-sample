@@ -15,6 +15,7 @@ import com.russellgutierrez.demo.tinklabs.sample.R;
 import com.russellgutierrez.demo.tinklabs.sample.data.model.Item;
 import com.russellgutierrez.demo.tinklabs.sample.data.model.ItemType;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import butterknife.ButterKnife;
 
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ImageViewHolder> {
 
+    public static final String TITLE_PATTERN = "#{0} {1}";
     private List<Item> mItems;
     private OnItemClickListener mItemClickListener;
 
@@ -80,7 +82,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ImageViewHol
     private void bindItemViewHolder(ItemViewHolder holder, int position) {
         Item item = mItems.get(position);
         holder.loadFromUrl(item.imageUrl());
-        holder.titleTextView.setText(item.title());
+        //for demo purpose, add item number to make it easier to check
+        String title = MessageFormat.format(TITLE_PATTERN, position + 1, item.title());
+        holder.titleTextView.setText(title);
         holder.descriptionTextView.setText(item.description());
     }
 

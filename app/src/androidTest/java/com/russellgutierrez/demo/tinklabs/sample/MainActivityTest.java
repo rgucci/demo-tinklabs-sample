@@ -23,6 +23,8 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
+import java.text.MessageFormat;
+
 import io.reactivex.Observable;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -47,6 +49,8 @@ public class MainActivityTest {
             new TestComponentRule(InstrumentationRegistry.getTargetContext());
     public final ActivityTestRule<MainActivity> main =
             new ActivityTestRule<>(MainActivity.class, false, false);
+
+    public static final String TITLE_PATTERN = "#{0} {1}";
 
     private String[] tabNames;
 
@@ -102,7 +106,7 @@ public class MainActivityTest {
             if (item.itemType() == ItemType.NORMAL) {
                 onView(new RecyclerViewMatcher(R.id.recycler_view).atPosition(i))
                         .check(matches(hasDescendant(allOf(withId(R.id.text_title),
-                                withText(item.title())))));
+                                withText(MessageFormat.format(TITLE_PATTERN, i + 1, item.title()))))));
                 onView(new RecyclerViewMatcher(R.id.recycler_view).atPosition(i))
                         .check(matches(hasDescendant(allOf(withId(R.id.text_description),
                                 withText(item.description())))));
