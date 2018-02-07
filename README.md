@@ -137,7 +137,7 @@ Note: For Android Studio to use syntax highlighting for Automated tests and Unit
 ## License
 
 ```
-    Copyright 2015 Russell JVM Gutierrez
+    Copyright 2018 Russell JVM Gutierrez
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
