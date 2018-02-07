@@ -1,7 +1,6 @@
-# Android Boilerplate
+# Images Demo App - TinkLabs Coding Test
 
-Sample Android app that we use at [ribot](http://ribot.co.uk) as a reference for new Android projects. It demonstrates the architecture, tools and guidelines that we use when developing for the Android platform (https://github.com/ribot/android-guidelines)
-
+This project is based on work created by [ribot](http://ribot.co.uk) as a reference for new Android projects.
 Libraries and tools included:
 
 - Support libraries
@@ -9,7 +8,6 @@ Libraries and tools included:
 - [RxJava](https://github.com/ReactiveX/RxJava) and [RxAndroid](https://github.com/ReactiveX/RxAndroid) 
 - [Retrofit 2](http://square.github.io/retrofit/)
 - [Dagger 2](http://google.github.io/dagger/)
-- [SqlBrite](https://github.com/square/sqlbrite)
 - [Butterknife](https://github.com/JakeWharton/butterknife)
 - [Timber](https://github.com/JakeWharton/timber)
 - [Glide](https://github.com/bumptech/glide)
@@ -19,7 +17,7 @@ Libraries and tools included:
 - [Mockito](http://mockito.org/)
 - [Checkstyle](http://checkstyle.sourceforge.net/), [PMD](https://pmd.github.io/) and [Findbugs](http://findbugs.sourceforge.net/) for code analysis
 
-## Requirements
+## Software Requirements
 
 - JDK 1.8
 - [Android SDK](http://developer.android.com/sdk/index.html).
@@ -29,28 +27,98 @@ Libraries and tools included:
 
 ## Architecture
 
-This project follows ribot's Android architecture guidelines that are based on [MVP (Model View Presenter)](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter). Read more about them [here](https://github.com/ribot/android-guidelines/blob/master/architecture_guidelines/android_architecture.md). 
+This project uses Android architecture guidelines that are based on [MVP (Model View Presenter)](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter). Read more about them [here](https://github.com/ribot/android-guidelines/blob/master/architecture_guidelines/android_architecture.md). 
 
 ![](https://github.com/ribot/android-guidelines/raw/master/architecture_guidelines/architecture_diagram.png)
 
-### How to implement a new screen following MVP
+## App Description
 
-Imagine you have to implement a sign in screen. 
+- This app displays live search results from the Google Image Search API.
+- there are 3 tabs. Each tab displays a different search query related to: travel, food, and shopping.
+- the search results are loaded on demand. If the tab is not yet selected, the query will not be executed
+- there are 2 kinds of items in search results: normal items (with title, description, image) and image only items
+- only 10 items at a time are returned by the search query.
+- list implements infinite scroll: once the end of the list is reached, if there are more than 10 items, the search query for the next page will be executed and the next 10 items) will be displayed
+- clicking an item on the list will open the web browser to display the web page that contains the image
 
-1. Create a new package under `ui` called `signin`
-2. Create an new Activity called `ActivitySignIn`. You could also use a Fragment.
-3. Define the view interface that your Activity is going to implement. Create a new interface called `SignInMvpView` that extends `MvpView`. Add the methods that you think will be necessary, e.g. `showSignInSuccessful()`
-4. Create a `SignInPresenter` class that extends `BasePresenter<SignInMvpView>`
-5. Implement the methods in `SignInPresenter` that your Activity requires to perform the necessary actions, e.g. `signIn(String email)`. Once the sign in action finishes you should call `getMvpView().showSignInSuccessful()`.
-6. Create a `SignInPresenterTest`and write unit tests for `signIn(email)`. Remember to mock the  `SignInMvpView` and also the `DataManager`.
-7. Make your  `ActivitySignIn` implement `SignInMvpView` and implement the required methods like `showSignInSuccessful()`
-8. In your activity, inject a new instance of `SignInPresenter` and call `presenter.attachView(this)` from `onCreate` and `presenter.detachView()` from `onDestroy()`. Also, set up a click listener in your button that calls `presenter.signIn(email)`.
+## Backend API
+
+This project uses Google's custom Image Search API (free tier) which has the following limitations:
+- Daily quota of 1000 requests
+- 100 maximum result items per search
+- 100 queries per 100 seconds
+- the API limits each result page to **exactly** 10 items
+ 
+If any of these limitations are exceeded, the API will return HTTP 40x errors. If this happens, just wait for a while, then re-run the search.
+
+Another important note, to simulate the requirement for two different items in the search results, the app will make **every 3rd** result (i.e. 3, 13, 23, 33, 43, 53, 63, 73, 83, 93) into an **Image Only** item. All other items will be normal items.
 
 ## Code Quality
 
-This project integrates a combination of unit tests, functional test and code analysis tools. 
+This project integrates a combination of unit tests and functional tests. 
 
-### Tests
+Unit tests are provided by the following classes:
+
+- ResultItemTest
+- ImageSearchManagerTest
+- DataManagerTest
+- ListPresenterTest
+- MainPresenterTest
+
+Functional tests are provided for the following classes:
+
+- MainActivityTest
+
+### Test Details
+
+#### ResultItemTest
+
+Tests the correctness of mapping from Google Image Search result **SearchItem** to the domain object **Item** 
+
+#### ImageSearchManagerTest
+
+Tests the the correctness of the logic converting the Google API result into the domain search result object used by the app.
+
+- test one search result
+- test multiple search results (10)
+- test search result with no items
+- test getting the next page of results
+- test getting search item past 100 (should return no results, as limited by the API)
+
+In the unit test, the real API is not executed. Instead, a mock ImageSearchEndpoint is created, and the simulated test results are generated by SearchResultGenerator.
+
+#### DataManagerTest
+
+Tests that this class delegates the correct calls to the helper classes. Note the stub for ImageSearch interface and the mock object created does not actually call the API.
+
+This also has a test to check that the BrowserHelper delegate is called correctly.
+
+#### ListPresenterTest
+
+Tests the Presenter logic for displaying the list:
+
+- test displaying multiple items in the list
+- test displaying no items in the list
+- test displaying an error when retrieving the list data
+- test displaying the item selected
+
+There are three mock objects created for this test:
+
+- the "fragment" to display the list. Note that a real Android fragment is **NOT** created and a mock "View" is created instead.
+- the mock DataManager to create test data
+- the mock BrowserHelper to test item selection
+
+#### MainPresenterTest
+
+Tests the Presenter logic for displaying the main activity and the tabs. Note that a real Android activity is **NOT** created, and a mock "View" is created instead.
+
+#### MainActivityTest
+
+This test provides a simple integration test to check if the UI elements are displayed correctly. It uses Espresso to simulate the UI interactions.
+
+Note that this test requires an Android device or simulator.
+
+### Running Tests
 
 To run **unit** tests on your machine:
 
@@ -66,86 +134,10 @@ To run **functional** tests on connected devices:
 
 Note: For Android Studio to use syntax highlighting for Automated tests and Unit tests you **must** switch the Build Variant to the desired mode.
 
-### Code Analysis tools 
-
-The following code analysis tools are set up on this project:
-
-* [PMD](https://pmd.github.io/): It finds common programming flaws like unused variables, empty catch blocks, unnecessary object creation, and so forth. See [this project's PMD ruleset](config/quality/pmd/pmd-ruleset.xml).
-
-``` 
-./gradlew pmd
-```
-
-* [Findbugs](http://findbugs.sourceforge.net/): This tool uses static analysis to find bugs in Java code. Unlike PMD, it uses compiled Java bytecode instead of source code.
-
-```
-./gradlew findbugs
-```
-
-* [Checkstyle](http://checkstyle.sourceforge.net/): It ensures that the code style follows [our Android code guidelines](https://github.com/ribot/android-guidelines/blob/master/project_and_code_guidelines.md#2-code-guidelines). See our [checkstyle config file](config/quality/checkstyle/checkstyle-config.xml).
-
-```
-./gradlew checkstyle
-```
-
-### The check task
-
-To ensure that your code is valid and stable use check: 
-
-```
-./gradlew check
-```
-
-This will run all the code analysis tools and unit tests in the following order:
-
-![Check Diagram](images/check-task-diagram.png)
- 
-## Distribution
-
-The project can be distributed using either [Crashlytics](http://support.crashlytics.com/knowledgebase/articles/388925-beta-distributions-with-gradle) or the [Google Play Store](https://github.com/Triple-T/gradle-play-publisher).
-
-### Play Store
-
-We use the __Gradle Play Publisher__ plugin. Once set up correctly, you will be able to push new builds to
-the Alpha, Beta or production channels like this
-
-```
-./gradlew publishApkRelease
-```
-Read [plugin documentation](https://github.com/Triple-T/gradle-play-publisher) for more info.
-
-### Crashlytics
-
-You can also use Fabric's Crashlytics for distributing beta releases. Remember to add your fabric
-account details to `app/src/fabric.properties`.
-
-To upload a release build to Crashlytics run:
-
-```
-./gradlew assembleRelease crashlyticsUploadDistributionRelease
-```
-
-## New project setup 
-
-To quickly start a new project from this boilerplate follow the next steps:
-
-* Download this [repository as a zip](https://github.com/ribot/android-boilerplate/archive/master.zip).
-* Change the package name. 
-  * Rename packages in main, androidTest and test using Android Studio.
-  * In `app/build.gradle` file, `packageName` and `testInstrumentationRunner`.
-  * In `src/main/AndroidManifest.xml` and `src/debug/AndroidManifest.xml`.
-* Create a new git repository, [see GitHub tutorial](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/).
-* Replace the example code with your app code following the same architecture.
-* In `app/build.gradle` add the signing config to enable release versions.
-* Add Fabric API key and secret to fabric.properties and uncomment Fabric plugin set up in `app/build.gradle`
-* Update `proguard-rules.pro` to keep models (see TODO in file) and add extra rules to file if needed.
-* Update README with information relevant to the new project.
-* Update LICENSE to match the requirements of the new project.
-
 ## License
 
 ```
-    Copyright 2015 Ribot Ltd.
+    Copyright 2015 Russell JVM Gutierrez
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
