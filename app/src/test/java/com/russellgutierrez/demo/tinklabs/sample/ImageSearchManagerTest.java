@@ -18,11 +18,11 @@ import com.russellgutierrez.demo.tinklabs.sample.data.googleimage.remote.ImageSe
 import com.russellgutierrez.demo.tinklabs.sample.data.googleimage.remote.ImageSearchManager;
 import com.russellgutierrez.demo.tinklabs.sample.data.model.SearchItems;
 import com.russellgutierrez.demo.tinklabs.sample.util.RxSchedulersOverrideRule;
-import com.russellgutierrez.demo.tinklabs.sample.util.SearchResultGenerator;
+import com.russellgutierrez.demo.tinklabs.sample.test.common.SearchResultGenerator;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static com.russellgutierrez.demo.tinklabs.sample.util.SearchResultGenerator.generateSearchItems;
+import static com.russellgutierrez.demo.tinklabs.sample.test.common.SearchResultGenerator.generateSearchItems;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ImageSearchManagerTest {

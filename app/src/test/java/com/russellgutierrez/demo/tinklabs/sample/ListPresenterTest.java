@@ -17,7 +17,7 @@ import com.russellgutierrez.demo.tinklabs.sample.data.model.SearchItems;
 import com.russellgutierrez.demo.tinklabs.sample.ui.main.ListMvpView;
 import com.russellgutierrez.demo.tinklabs.sample.ui.main.ListPresenter;
 import com.russellgutierrez.demo.tinklabs.sample.util.RxSchedulersOverrideRule;
-import com.russellgutierrez.demo.tinklabs.sample.util.SearchResultGenerator;
+import com.russellgutierrez.demo.tinklabs.sample.test.common.SearchResultGenerator;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;

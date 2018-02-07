@@ -1,4 +1,4 @@
-package com.russellgutierrez.demo.tinklabs.sample.util;
+package com.russellgutierrez.demo.tinklabs.sample.test.common;
 
 import java.util.ArrayList;
 import java.util.Collections;

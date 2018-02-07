@@ -3,6 +3,7 @@ package com.russellgutierrez.demo.tinklabs.sample.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 
 import javax.inject.Inject;

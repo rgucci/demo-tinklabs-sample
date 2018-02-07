@@ -7,6 +7,6 @@
     <string name="dialog_action_cancel">Cancel</string>
     <string name="dialog_error_title">Sorry</string>
 
-    <string name="empty_results">There are not results</string>
+    <string name="empty_results">There are no results</string>
     <string name="error_loading_results">There was a problem loading the results</string>
 </resources>

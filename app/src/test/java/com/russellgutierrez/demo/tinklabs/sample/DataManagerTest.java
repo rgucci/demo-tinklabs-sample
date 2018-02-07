@@ -13,7 +13,7 @@ import com.russellgutierrez.demo.tinklabs.sample.data.DataManager;
 import com.russellgutierrez.demo.tinklabs.sample.data.local.PreferencesHelper;
 import com.russellgutierrez.demo.tinklabs.sample.data.model.SearchItems;
 import com.russellgutierrez.demo.tinklabs.sample.data.remote.ImageSearch;
-import com.russellgutierrez.demo.tinklabs.sample.util.SearchResultGenerator;
+import com.russellgutierrez.demo.tinklabs.sample.test.common.SearchResultGenerator;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;

@@ -48,10 +48,9 @@ public class ListFragment extends Fragment implements ListMvpView {
         final View view = inflater.inflate(R.layout.view_list, container, false);
         ButterKnife.bind(this, view);
 
-        setupRecyclerView();
-
-        mListPresenter.attachView(this);
         final Category category = (Category) getArguments().getSerializable(ListFragment.ARG_CATEGORY);
+        setupRecyclerView(category);
+        mListPresenter.attachView(this);
         mListPresenter.setQuery(category.getQuery());
 
         if (getUserVisibleHint()) {
@@ -61,13 +60,14 @@ public class ListFragment extends Fragment implements ListMvpView {
         return view;
     }
 
-    private void setupRecyclerView() {
+    private void setupRecyclerView(Category category) {
         mItemsAdapter = new ItemsAdapter(new ItemsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 mListPresenter.browseItem(position);
             }
         });
+        mRecyclerView.setTag(category);
         mRecyclerView.setAdapter(mItemsAdapter);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
