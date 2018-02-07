@@ -52,19 +52,8 @@ public class SearchResultGenerator {
         for (int i = 0; i < searchResult.items().size(); i++) {
             int num = i + 1;
             ItemType itemType = num % 10 == 3 ? ItemType.IMAGE_ONLY : ItemType.NORMAL;
-            Item.Builder builder = Item.builder()
-                    .itemType(itemType)
-                    .linkUrl(searchResult.items().get(i).image().contextLink());
-            if (ItemType.IMAGE_ONLY == itemType) {
-                builder.imageUrl(searchResult.items().get(i).link())
-                        .title("")
-                        .description("");
-            } else {
-                builder.imageUrl(searchResult.items().get(i).image().thumbnailLink())
-                        .title("#" + num + " " + searchResult.items().get(i).displayLink())
-                        .description(searchResult.items().get(i).snippet());
-            }
-            items.add(builder.build());
+            Item item = searchResult.items().get(i).convert(itemType);
+            items.add(item);
         }
         SearchItems searchItems = SearchItems.builder()
                 .items(items)

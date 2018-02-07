@@ -4,6 +4,7 @@ package com.russellgutierrez.demo.tinklabs.sample.data.googleimage.remote;
 import android.content.Context;
 
 import com.russellgutierrez.demo.tinklabs.sample.R;
+import com.russellgutierrez.demo.tinklabs.sample.data.googleimage.model.NextPage;
 import com.russellgutierrez.demo.tinklabs.sample.data.googleimage.model.ResultItem;
 import com.russellgutierrez.demo.tinklabs.sample.data.googleimage.model.SearchResult;
 import com.russellgutierrez.demo.tinklabs.sample.data.model.Item;
@@ -64,34 +65,13 @@ public class ImageSearchManager implements ImageSearch {
                             //create a very simple way to return different item types
                             //this is ok for demo only
                             ItemType itemType = index % 10 == 3 ? ItemType.IMAGE_ONLY : ItemType.NORMAL;
-
-                            //TODO improve this by creating a mapping class
-                            switch (itemType) {
-                                case IMAGE_ONLY:
-                                    list.add(Item.builder()
-                                            .itemType(ItemType.IMAGE_ONLY)
-                                            .title("")
-                                            .description("")
-                                            .imageUrl(resultItem.link())
-                                            .linkUrl(resultItem.image().contextLink())
-                                            .build());
-                                    break;
-                                case NORMAL:
-                                default:
-                                    String title = "#" + index + " " + resultItem.displayLink();
-                                    list.add(Item.builder()
-                                            .itemType(ItemType.NORMAL)
-                                            .title(title)
-                                            .description(resultItem.snippet())
-                                            .imageUrl(resultItem.image().thumbnailLink())
-                                            .linkUrl(resultItem.image().contextLink())
-                                            .build());
-                                    break;
-                            }
+                            list.add(resultItem.convert(itemType));
                         }
+                        NextPage nextPage = searchResult.queries().nextPage().get(0);
                         return SearchItems.builder()
-                                .items(list).count(searchResult.queries().nextPage().get(0).count())
-                                .nextPageStart(searchResult.queries().nextPage().get(0).startIndex())
+                                .items(list)
+                                .count(nextPage.count())
+                                .nextPageStart(nextPage.startIndex())
                                 .build();
                     }
                 });
